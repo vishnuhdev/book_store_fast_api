@@ -18,10 +18,10 @@ class AuthorService:
         result = self.collection.find()
         authors = []
         async for author in result:
-            books = await self.get_book_details(author['name'])
+            author = self.__replace_id(author)
+            books = await self.get_book_details(author['id'])
             author['books'] = books[0:3]
             author['total_published'] = len(books)
-            author = self.__replace_id(author)
             authors.append(AuthorResponse(**author))
         return authors
 
@@ -33,14 +33,14 @@ class AuthorService:
 
     async def retrieve_author(self, author_id: str) -> AuthorResponse:
         author = await self.collection.find_one({'_id': ObjectId(author_id)})
-        books = await self.get_book_details(author['name'])
+        books = await self.get_book_details(author_id)
         author['books'] = books[0:3]
         author['total_published'] = len(books)
         author = self.__replace_id(author)
         return AuthorResponse(**author)
 
-    async def get_book_details(self, name: str):
-        result = self.book_collection.find({'author': name})
+    async def get_book_details(self, author_id: str):
+        result = self.book_collection.find({'author': author_id})
         total_books = []
         async for book in result:
             book = self.__replace_id(book)

@@ -1,18 +1,11 @@
 from enum import Enum
-from typing import List
+from typing import Optional
 
 from fastapi import Query
 from pydantic.dataclasses import dataclass
 
-from app.models.pydantics.base_model import CreateUpdateSchema, RequestSchema
+from app.models.pydantics.base_model import CreateUpdateSchema, RequestSchema, BaseSchema
 from pydantic import Field, BaseModel
-
-from app.models.pydantics.category_pydantics import CategoryResponse
-
-
-class BaseSchema(BaseModel):
-    id: str = Field(...)
-    name: str = Field(...)
 
 
 class CategoryEnums(str, Enum):
@@ -52,15 +45,13 @@ class Category(BaseModel):
 class BookCreate(RequestSchema):
     name: str = Field(..., examples=['Harry Porter Chambers of secrets (VOLUME 1)'])
     description: str = Field(None, examples=['This is description about a book.'])
-    author: str = Field(..., examples=['65454adse942d3b6234dcdbc6c'])
-    is_published: bool = Field(False)
+    category: str = Field(..., examples=['FICTION'])
 
 
 class BookUpdate(RequestSchema):
-    name: str = Field(None, examples=['Harry Porter Chambers of secrets (VOLUME 1)'])
-    description: str = Field(None, examples=['This is description about a book.'])
-    author: str = Field(None, examples=['65454adse942d3b6234dcdbc6c'])
-    is_published: bool = Field(False)
+    name: Optional[str] = Field(None, examples=['Harry Porter Chambers of secrets (VOLUME 1)'])
+    description: Optional[str] = Field(None, examples=['This is description about a book.'])
+    is_published: Optional[bool] = Field(False)
 
 
 class BookResponse(CreateUpdateSchema):
@@ -68,5 +59,15 @@ class BookResponse(CreateUpdateSchema):
     description: str = Field(None, examples=['This is description about a book.'])
     author: BaseSchema = Field(None, examples=[BaseSchema(id='65454adse942d3b6234dcdbc6c', name='James')])
     is_published: bool = Field(False)
-    custom_variable: str = Field(...)
-    category: CategoryResponse = Field(...)
+    category: BaseSchema = Field(...)
+    publisher: BaseSchema = Field(None)
+    average_rating: float = Field(..., examples=[4.6])
+    total_reviews: int = Field(..., examples=[120])
+
+
+class BookCreateResponse(CreateUpdateSchema):
+    name: str = Field(None, examples=['Harry Porter Chambers of secrets (VOLUME 1)'])
+    description: str = Field(None, examples=['This is description about a book.'])
+    author: BaseSchema = Field(None, examples=[BaseSchema(id='65454adse942d3b6234dcdbc6c', name='James')])
+    is_published: bool = Field(False)
+    category: BaseSchema = Field(...)

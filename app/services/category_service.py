@@ -33,7 +33,8 @@ class CategoryService:
         return CategoryResponse(**category)
 
     async def update_category(self, category_id: str, category: CategoryUpdate) -> CategoryResponse:
-        if not await self.collection.find_one({'_id': ObjectId(category_id)}):
+        is_category = await self.collection.find_one({'_id': ObjectId(category_id)})
+        if not is_category:
             raise HTTPException(status_code=404, detail='Invalid Category ID')
         category_dict = category.dict(exclude_unset=True)
         await self.collection.update_one({'_id': ObjectId(category_id)}, {'$set': category_dict})

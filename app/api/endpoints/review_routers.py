@@ -5,7 +5,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from app.database import get_database
 from app.services.review_service import ReviewService
 from app.models.pydantics.review_pydantics import ReviewResponse, ReviewCreate, ReviewUpdate
-from app.utils.utils import get_current_username
+from app.utils.JWTToken import JWTBearer
 
 review_routers = APIRouter(
     prefix="/books",
@@ -19,7 +19,7 @@ review_routers = APIRouter(
 )
 async def retrieve_reviews(
         book_id: str,
-        user_id: str = Depends(get_current_username),
+        user_id: str = Depends(JWTBearer()),
         db: AsyncIOMotorClient = Depends(get_database),
 ):
     service = ReviewService(db)
@@ -33,7 +33,7 @@ async def retrieve_reviews(
 async def create_review(
         review: ReviewCreate,
         book_id: str,
-        user_id: str = Depends(get_current_username),
+        user_id: str = Depends(JWTBearer()),
         db: AsyncIOMotorClient = Depends(get_database)
 ):
     service = ReviewService(db)

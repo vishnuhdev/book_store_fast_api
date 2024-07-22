@@ -1,8 +1,8 @@
-from pydantic import Field
+from pydantic import Field, EmailStr
 
 from app.models.db.base_model import CreateSchema
 
 
 class User(CreateSchema):
-    email: str = Field(...)
+    email: EmailStr = Field(...)
     password: str = Field(...)
